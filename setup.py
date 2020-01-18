@@ -9,7 +9,7 @@ with open("pod_dealing/version.py") as fp:
 
 
 requires = [
-    "pod-base<2"
+    "pod-base>=1.0.2,<2"
 ]
 
 setup(
@@ -23,7 +23,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["POD", "dealing", "multi invoice", "issue invoice", "pod sdk"],
-    packages=find_packages(exclude=("test", "examples")),
+    packages=find_packages(exclude=("tests", "examples")),
     install_requires=requires,
     zip_safe=False,
     classifiers=[
