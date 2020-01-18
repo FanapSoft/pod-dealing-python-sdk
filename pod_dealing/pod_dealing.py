@@ -11,7 +11,7 @@ def split_str_to_list(text, sep=","):
     :param str sep: جدا کننده
     :return: list
     """
-    return map(str.strip, text.split(sep))
+    return map(unicode.strip, text.split(sep))
 
 
 class PodDealing(PodBase):
@@ -217,11 +217,14 @@ class PodDealing(PodBase):
         params["address"] = address
 
         if type(guild_code) == list:
-            params["guildCode[]"] = guild_code
+            params["guildCode"] = guild_code
         else:
-            params["guildCode[]"] = [guild_code]
+            params["guildCode"] = [guild_code]
 
         self._validate(params, "updateBusiness")
+
+        params["guildCode[]"] = params["guildCode"]
+        del params["guildCode"]
 
         return self._request.call(
             sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/updateBusiness",
