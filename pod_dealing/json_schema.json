@@ -349,7 +349,7 @@
       },
       "email": {
         "type": "string",
-        "format": "email",
+        "pattern": "^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$",
         "title": "ایمیل"
       },
       "registrationNumber": {
@@ -629,7 +629,7 @@
       },
       "email": {
         "type": "string",
-        "format": "email",
+        "pattern": "^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$",
         "title": "آدرس ایمیل کاربر"
       },
       "cellphone": {
@@ -710,7 +710,7 @@
       },
       "email": {
         "type": "string",
-        "format": "email",
+        "pattern": "^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$",
         "title": "ایمیل"
       },
       "registrationNumber": {
@@ -909,7 +909,8 @@
         "type": "string"
       },
       "email": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\\.)+[A-Za-z]{2,}$"
       },
       "registrationNumber": {
         "type": "integer"
