@@ -11,7 +11,7 @@ def split_str_to_list(text, sep=","):
     :param str sep: جدا کننده
     :return: list
     """
-    return map(unicode.strip, text.split(sep))
+    return map(text.strip, text.split(sep))
 
 
 class PodDealing(PodBase):
