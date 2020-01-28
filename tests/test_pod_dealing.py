@@ -23,7 +23,7 @@ class TestPodDealing(unittest.TestCase):
     def __random_string(self, length=15):
         return "".join(random.choice(self.__letters) for i in range(length))
 
-    def test_1_add_user_and_business_required_params(self):
+    def test_01_add_user_and_business_required_params(self):
         username = "test_py_user_{}".format(str(uuid4()).replace("-", "_"))
         email = "{}@pytest.pytest".format(self.__random_string())
         business_name = "کسب و کار پایتونی {}".format((datetime.now()).__format__("%Y%m%d%H%M%S"))
@@ -37,7 +37,7 @@ class TestPodDealing(unittest.TestCase):
 
         self.assertIsInstance(result, dict)
 
-    def test_1_add_user_and_business_full_params(self):
+    def test_01_add_user_and_business_full_params(self):
         username = "test_py_user_{}".format(str(uuid4()).replace("-", "_"))
         email = "{}@pytest.pytest".format(self.__random_string())
         business_name = "کسب و کار پایتونی {}".format((datetime.now()).__format__("%Y%m%d%H%M%S"))
@@ -78,7 +78,7 @@ class TestPodDealing(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.__dealer_id = result["id"]
 
-    def test_1_add_user_and_business_validation_error(self):
+    def test_01_add_user_and_business_validation_error(self):
         username = "reza1607"
         email = "abcd"
         business_name = "کسب و کار پایتونی"
@@ -92,7 +92,7 @@ class TestPodDealing(unittest.TestCase):
                                                  business_name=business_name, country="ایران", state="خراسان رضوی",
                                                  city="مشهد", address="فناپ سافت مشهد")
 
-    def test_2_update_business_required_params(self):
+    def test_02_update_business_required_params(self):
         result = self.__dealing.update_business(self.__dealer_id, business_name="Edited",
                                                 description="کسب و کار ویرایشی",
                                                 guild_code=["API_GUILD", "CLOTHING_GUILD",
@@ -101,7 +101,7 @@ class TestPodDealing(unittest.TestCase):
                                                 address="فناپ سافت مشهد - ویرایش شده")
         self.assertIsInstance(result, dict)
 
-    def test_2_update_business_full_params(self):
+    def test_02_update_business_full_params(self):
         national_code = "{}{}".format(random.randint(1000000, 9999999), random.randint(1000, 9999))
 
         other_params = {
@@ -145,7 +145,7 @@ class TestPodDealing(unittest.TestCase):
                                                 address="فناپ سافت مشهد - ویرایش شده", **other_params)
         self.assertIsInstance(result, dict)
 
-    def test_2_update_business_validation_error(self):
+    def test_02_update_business_validation_error(self):
         with self.assertRaises(InvalidDataException):
             other_params = {
                 "email": "abcde"
@@ -157,11 +157,11 @@ class TestPodDealing(unittest.TestCase):
                                            country="ایران", state="خراسان رضوی", city="مشهد",
                                            address="فناپ سافت مشهد - ویرایش شده", **other_params)
 
-    def test_3_list_user_created_business(self):
+    def test_03_list_user_created_business(self):
         businesses = self.__dealing.list_user_created_business()
         self.assertIsInstance(businesses, list)
 
-    def test_3_list_user_created_business_filter_by_biz_id(self):
+    def test_03_list_user_created_business_filter_by_biz_id(self):
         params = {
             "bizId": [self.__dealer_id]
         }
@@ -171,7 +171,7 @@ class TestPodDealing(unittest.TestCase):
         self.assertEqual(len(businesses), 1)
         self.assertEqual(businesses[0]["id"], self.__dealer_id)
 
-    def test_3_list_user_created_business_filter_by_biz_id_not_exists(self):
+    def test_03_list_user_created_business_filter_by_biz_id_not_exists(self):
         params = {
             "bizId": [-1]
         }
@@ -180,7 +180,7 @@ class TestPodDealing(unittest.TestCase):
         self.assertIsInstance(businesses, list)
         self.assertEqual(len(businesses), 0)
 
-    def test_3_list_user_created_business_validation_error(self):
+    def test_03_list_user_created_business_validation_error(self):
         params = {
             "bizId": "this is a string"
         }
@@ -188,7 +188,7 @@ class TestPodDealing(unittest.TestCase):
         with self.assertRaises(InvalidDataException):
             self.__dealing.list_user_created_business(**params)
 
-    def test_4_get_api_token_for_created_business(self):
+    def test_04_get_api_token_for_created_business(self):
         result = self.__dealing.get_api_token_for_created_business(business_id=self.__dealer_id)
         self.assertIsInstance(result, dict)
         self.__dealer_api_token = result["apiToken"]
@@ -196,72 +196,72 @@ class TestPodDealing(unittest.TestCase):
     def create_dealing_dealer(self):
         self.__dealing = PodDealing(api_token=self.__dealer_api_token, server_type=SERVER_MODE)
 
-    def test_4_get_api_token_for_created_business_biz_id_not_exists(self):
+    def test_04_get_api_token_for_created_business_biz_id_not_exists(self):
         with self.assertRaises(APIException):
             self.__dealing.get_api_token_for_created_business(business_id=-1)
 
-    def test_4_get_api_token_for_created_business_validation_error(self):
+    def test_04_get_api_token_for_created_business_validation_error(self):
         with self.assertRaises(TypeError):
             self.__dealing.get_api_token_for_created_business()
 
-    def test_5_favorite_business(self):
+    def test_05_favorite_business(self):
         self.assertEqual(self.__dealing.favorite_business(self.__dealer_id), True)
 
-    def test_5_favorite_business_validation_error(self):
+    def test_05_favorite_business_validation_error(self):
         with self.assertRaises(InvalidDataException):
             self.assertEqual(self.__dealing.favorite_business("biz id"), True)
 
-    def test_5_favorite_business_biz_id_not_exists(self):
+    def test_05_favorite_business_biz_id_not_exists(self):
         with self.assertRaises(APIException):
             self.__dealing.favorite_business(-1)
 
-    # def test_6_rate_business(self):
+    # def test_06_rate_business(self):
     #     self.assertEqual(self.__dealing.rate_business(self.__dealer_id, 5), True)
 
-    def test_6_rate_business_validation_error(self):
+    def test_06_rate_business_validation_error(self):
         with self.assertRaises(InvalidDataException):
             self.assertEqual(self.__dealing.rate_business("biz id", 9), True)
 
-    def test_6_rate_business_biz_id_not_exists(self):
+    def test_06_rate_business_biz_id_not_exists(self):
         with self.assertRaises(APIException):
             self.__dealing.rate_business(-1, 5)
 
-    def test_7_comment_business(self):
+    def test_07_comment_business(self):
         self.assertGreaterEqual(self.__dealing.comment_business(self.__dealer_id, "این یک نظر از سمت تست پایتون است"),
                                 1, msg="send comment : successful comment")
 
-    def test_7_comment_business_validation_error(self):
+    def test_07_comment_business_validation_error(self):
         with self.assertRaises(InvalidDataException, msg="send comment : invalid param"):
             self.__dealing.comment_business(-1, 54654)
 
-    def test_7_comment_business_biz_id_not_exists(self):
+    def test_07_comment_business_biz_id_not_exists(self):
         with self.assertRaises(APIException, msg="send comment : business not exists"):
             self.__dealing.comment_business(-1, "این یک نظر از سمت تست پایتون است")
 
-    def test_8_comment_business_list(self):
+    def test_08_comment_business_list(self):
         result = self.__dealing.comment_business_list(self.__dealer_id)
         self.assertIsInstance(result, list, msg="comment list : check instance")
         self.assertGreaterEqual(len(result), 1, msg="comment list : check len")
 
-    def test_8_comment_business_list_validation_error(self):
+    def test_08_comment_business_list_validation_error(self):
         with self.assertRaises(InvalidDataException, msg="comment list : invalid param"):
             self.__dealing.comment_business_list("biz id")
 
-    def test_8_comment_business_list_required_params(self):
+    def test_08_comment_business_list_required_params(self):
         with self.assertRaises(TypeError, msg="comment list : required params"):
             self.__dealing.comment_business_list()
 
-    def test_8_comment_business_list_first_id(self):
+    def test_08_comment_business_list_first_id(self):
         self.__dealing.comment_business_list(self.__dealer_id, firstId=0, msg="comment list : set first id")
 
-    def test_8_comment_business_list_last_id(self):
+    def test_08_comment_business_list_last_id(self):
         self.__dealing.comment_business_list(self.__dealer_id, lastId=0, msg="comment list : set last id")
 
-    def test_9_confirm_comment(self):
+    def test_09_confirm_comment(self):
         comments = self.__dealing.comment_business_list(BUSINESS_ID)
         self.assertEqual(self.__dealing.confirm_comment(comments[0]["id"]), True, msg="confirm comment : success")
 
-    def test_9_confirm_comment_required_params(self):
+    def test_09_confirm_comment_required_params(self):
         with self.assertRaises(TypeError, msg="confirm comment : require params"):
             self.__dealing.confirm_comment()
 
