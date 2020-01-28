@@ -19,7 +19,7 @@ class PodDealing(PodBase):
     def __init__(self, api_token, token_issuer="1", server_type="sandbox", config_path=None,
                  sc_api_key="", sc_voucher_hash=None):
         here = path.abspath(path.dirname(__file__))
-        self._services_file_path = path.join(here, "services.ini")
+        self._services_file_path = path.join(here, "services.json")
         super(PodDealing, self).__init__(api_token, token_issuer, server_type, config_path, sc_api_key, sc_voucher_hash,
                                          path.join(here, "json_schema.json"))
 
@@ -39,8 +39,8 @@ class PodDealing(PodBase):
             params["allProductAllow"] = all_product_allow
 
         self._validate(params, "addDealer")
-        return self._request.call(sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/addDealer",
-                                                                                           method_type="post"),
+        return self._request.call(super(PodDealing, self)._get_sc_product_settings("/nzh/biz/addDealer",
+                                                                                   method_type="post"),
                                   params=params, headers=self._get_headers(), **kwargs)
 
     def dealer_list(self, page=1, size=50, **kwargs):
@@ -51,13 +51,12 @@ class PodDealing(PodBase):
         :param int size: تعداد رکورد در هر صفحه
         :return: list
         """
-        params = kwargs
-        params["offset"] = calc_offset(page, size)
-        params["size"] = size
+        kwargs["offset"] = calc_offset(page, size)
+        kwargs["size"] = size
 
-        self._validate(params, "dealerList")
-        return self._request.call(sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/dealerList"),
-                                  params=params, headers=self._get_headers(), **kwargs)
+        self._validate(kwargs, "dealerList")
+        return self._request.call(super(PodDealing, self)._get_sc_product_settings("/nzh/biz/dealerList"),
+                                  params=kwargs, headers=self._get_headers(), **kwargs)
 
     def enable_dealer(self, dealer_biz_id, **kwargs):
         """
@@ -70,8 +69,8 @@ class PodDealing(PodBase):
 
         self._validate(params, "enableDealer")
 
-        return self._request.call(sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/enableDealer",
-                                                                                           method_type="post"),
+        return self._request.call(super(PodDealing, self)._get_sc_product_settings("/nzh/biz/enableDealer",
+                                                                                   method_type="post"),
                                   params=params, headers=self._get_headers(), **kwargs)
 
     def disable_dealer(self, dealer_biz_id, **kwargs):
@@ -85,8 +84,8 @@ class PodDealing(PodBase):
 
         self._validate(params, "disableDealer")
 
-        return self._request.call(sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/disableDealer",
-                                                                                           method_type="post"),
+        return self._request.call(super(PodDealing, self)._get_sc_product_settings("/nzh/biz/disableDealer",
+                                                                                   method_type="post"),
                                   params=params, headers=self._get_headers(), **kwargs)
 
     def business_dealing_list(self, page=1, size=50, **kwargs):
@@ -97,16 +96,14 @@ class PodDealing(PodBase):
         :param int size: تعداد در هر صفحه
         :return: list
         """
-        params = kwargs
-        params["offset"] = calc_offset(page, size)
-        params["size"] = size
+        kwargs["offset"] = calc_offset(page, size)
+        kwargs["size"] = size
 
-        self._validate(params, "businessDealingList")
+        self._validate(kwargs, "businessDealingList")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/businessDealingList",
-                                                                     method_type="post"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/businessDealingList", method_type="post"),
+            params=kwargs, headers=self._get_headers(), **kwargs)
 
     def add_user_and_business(self, username, agent_cellphone_number, agent_last_name, agent_first_name, description,
                               email, guild_code, business_name, country, state, city, address, **kwargs):
@@ -128,40 +125,37 @@ class PodDealing(PodBase):
 
         :return: dict
         """
-
-        params = kwargs
-        params["username"] = username
-        params["agentCellphoneNumber"] = agent_cellphone_number
-        params["agentLastName"] = agent_last_name
-        params["agentFirstName"] = agent_first_name
-        params["description"] = description
-        params["email"] = email
-        params["address"] = address
-        params["businessName"] = business_name
-        params["country"] = country
-        params["state"] = state
-        params["city"] = city
+        kwargs["username"] = username
+        kwargs["agentCellphoneNumber"] = agent_cellphone_number
+        kwargs["agentLastName"] = agent_last_name
+        kwargs["agentFirstName"] = agent_first_name
+        kwargs["description"] = description
+        kwargs["email"] = email
+        kwargs["address"] = address
+        kwargs["businessName"] = business_name
+        kwargs["country"] = country
+        kwargs["state"] = state
+        kwargs["city"] = city
 
         if type(guild_code) == list:
-            params["guildCode"] = guild_code
+            kwargs["guildCode"] = guild_code
         else:
-            params["guildCode"] = [guild_code]
+            kwargs["guildCode"] = [guild_code]
 
-        self._validate(params, "addUserAndBusiness")
+        self._validate(kwargs, "addUserAndBusiness")
 
-        if "tags" in params:
-            params["tags"] = split_str_to_list(params["tags"])
+        if "tags" in kwargs:
+            kwargs["tags"] = split_str_to_list(kwargs["tags"])
 
-        if "tagTrees" in params:
-            params["tagTrees"] = split_str_to_list(params["tagTrees"])
+        if "tagTrees" in kwargs:
+            kwargs["tagTrees"] = split_str_to_list(kwargs["tagTrees"])
 
-        params["guildCode[]"] = params["guildCode"]
-        del params["guildCode"]
+        kwargs["guildCode[]"] = kwargs["guildCode"]
+        del kwargs["guildCode"]
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/addUserAndBusiness",
-                                                                     method_type="post"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/addUserAndBusiness", method_type="post"),
+            params=kwargs, headers=self._get_headers(), **kwargs)
 
     def list_user_created_business(self, **kwargs):
         """
@@ -169,26 +163,25 @@ class PodDealing(PodBase):
 
         :return: list
         """
-        params = kwargs
-        params.setdefault("size", 50)
-        params.setdefault("page", 1)
-        params["offset"] = calc_offset(params["page"], params["size"])
+        kwargs.setdefault("size", 50)
+        kwargs.setdefault("page", 1)
+        kwargs["offset"] = calc_offset(kwargs["page"], kwargs["size"])
 
-        self._validate(params, "listUserCreatedBusiness")
+        self._validate(kwargs, "listUserCreatedBusiness")
 
-        if "guildCode" in params:
-            params["guildCode[]"] = params["guildCode"]
-            del params["guildCode"]
+        if "guildCode" in kwargs:
+            kwargs["guildCode[]"] = kwargs["guildCode"]
+            del kwargs["guildCode"]
 
-        if "tags" in params:
-            params["tags"] = split_str_to_list(params["tags"])
+        if "tags" in kwargs:
+            kwargs["tags"] = split_str_to_list(kwargs["tags"])
 
-        if "tagTrees" in params:
-            params["tagTrees"] = split_str_to_list(params["tagTrees"])
+        if "tagTrees" in kwargs:
+            kwargs["tagTrees"] = split_str_to_list(kwargs["tagTrees"])
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/listUserCreatedBusiness"), params=params,
-            headers=self._get_headers(), **params)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/listUserCreatedBusiness"), params=kwargs,
+            headers=self._get_headers(), **kwargs)
 
     def update_business(self, business_id, business_name, description, guild_code, country, state, city, address,
                         **kwargs):
@@ -207,29 +200,27 @@ class PodDealing(PodBase):
         :return: dict
         """
 
-        params = kwargs
-        params["bizId"] = business_id
-        params["description"] = description
-        params["businessName"] = business_name
-        params["country"] = country
-        params["state"] = state
-        params["city"] = city
-        params["address"] = address
+        kwargs["bizId"] = business_id
+        kwargs["description"] = description
+        kwargs["businessName"] = business_name
+        kwargs["country"] = country
+        kwargs["state"] = state
+        kwargs["city"] = city
+        kwargs["address"] = address
 
         if type(guild_code) == list:
-            params["guildCode"] = guild_code
+            kwargs["guildCode"] = guild_code
         else:
-            params["guildCode"] = [guild_code]
+            kwargs["guildCode"] = [guild_code]
 
-        self._validate(params, "updateBusiness")
+        self._validate(kwargs, "updateBusiness")
 
-        params["guildCode[]"] = params["guildCode"]
-        del params["guildCode"]
+        kwargs["guildCode[]"] = kwargs["guildCode"]
+        del kwargs["guildCode"]
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/updateBusiness",
-                                                                     method_type="post"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/updateBusiness", method_type="post"),
+            params=kwargs, headers=self._get_headers(), **kwargs)
 
     def get_api_token_for_created_business(self, business_id, **kwargs):
         """
@@ -242,7 +233,7 @@ class PodDealing(PodBase):
         self._validate(params, "getApiTokenForCreatedBusiness")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/getApiTokenForCreatedBusiness"),
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/getApiTokenForCreatedBusiness"),
             params=params, headers=self._get_headers(), **kwargs)
 
     def rate_business(self, business_id, rate, token=None, **kwargs):
@@ -266,8 +257,8 @@ class PodDealing(PodBase):
         self._validate(params, "rateBusiness")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/rateBusiness"), params=params,
-            headers=headers, **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/rateBusiness"), params=params, headers=headers,
+            **kwargs)
 
     def comment_business(self, business_id, comment, token=None, **kwargs):
         """
@@ -290,8 +281,8 @@ class PodDealing(PodBase):
         self._validate(params, "commentBusiness")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/commentBusiness"), params=params,
-            headers=headers, **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/commentBusiness"), params=params, headers=headers,
+            **kwargs)
 
     def favorite_business(self, business_id, token=None, **kwargs):
         """
@@ -334,7 +325,7 @@ class PodDealing(PodBase):
         self._validate(params, "businessFavorite")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/businessFavorite", method_type="post"),
+            super(PodDealing, self)._get_sc_product_settings("/nzh/businessFavorite", method_type="post"),
             params=params, headers=headers, **kwargs)
 
     def user_business_infos(self, business_ids, token=None, **kwargs):
@@ -364,8 +355,8 @@ class PodDealing(PodBase):
         }
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/userBusinessInfos"), params=params,
-            headers=headers, **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/userBusinessInfos"), params=params, headers=headers,
+            **kwargs)
 
     def comment_business_list(self, business_id, token=None, **kwargs):
         """
@@ -375,26 +366,25 @@ class PodDealing(PodBase):
         :param str token: اکسس توکن کاربر - در صورتی که ارسال نشود api token شما قرار میگیرد
         :return: list
         """
-        params = kwargs
-        params["businessId"] = business_id
+        kwargs["businessId"] = business_id
 
-        if "firstId" not in params and "lastId" not in params and "page" not in params:
-            params.setdefault("page", 1)
+        if "firstId" not in kwargs and "lastId" not in kwargs and "page" not in kwargs:
+            kwargs.setdefault("page", 1)
 
-        params.setdefault("size", 50)
+        kwargs.setdefault("size", 50)
 
-        if "page" in params:
-            params["offset"] = calc_offset(params["page"], params["size"])
-            del params["page"]
+        if "page" in kwargs:
+            kwargs["offset"] = calc_offset(kwargs["page"], kwargs["size"])
+            del kwargs["page"]
 
         headers = self._get_headers()
         if token is not None:
             headers["_token_"] = token
 
-        self._validate(params, "commentBusinessList")
+        self._validate(kwargs, "commentBusinessList")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/commentBusinessList"), params=params,
+            super(PodDealing, self)._get_sc_product_settings("/nzh/commentBusinessList"), params=kwargs,
             headers=headers, **kwargs)
 
     def confirm_comment(self, comment_id, **kwargs):
@@ -411,7 +401,7 @@ class PodDealing(PodBase):
         self._validate(params, "confirmComment")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/confirmComment"), params=params,
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/confirmComment"), params=params,
             headers=self._get_headers(), **kwargs)
 
     def un_confirm_comment(self, comment_id, **kwargs):
@@ -428,7 +418,7 @@ class PodDealing(PodBase):
         self._validate(params, "unconfirmComment")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/unconfirmComment"), params=params,
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/unconfirmComment"), params=params,
             headers=self._get_headers(), **kwargs)
 
     def add_dealer_product_permission(self, dealer_biz_id, product_id, **kwargs):
@@ -447,8 +437,8 @@ class PodDealing(PodBase):
         self._validate(params, "addDealerProductPermission")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/addDealerProductPermission",
-                                                                     method_type="post"), params=params,
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/addDealerProductPermission",
+                                                             method_type="post"), params=params,
             headers=self._get_headers(), **kwargs)
 
     def dealer_product_permission_list(self, page=1, size=50, **kwargs):
@@ -459,15 +449,14 @@ class PodDealing(PodBase):
         :param int size: تعداد در هر صفحه
         :return: list
         """
-        params = kwargs
-        params["offset"] = calc_offset(page, size)
-        params["size"] = size
+        kwargs["offset"] = calc_offset(page, size)
+        kwargs["size"] = size
 
-        self._validate(params, "dealerProductPermissionList")
+        self._validate(kwargs, "dealerProductPermissionList")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/dealerProductPermissionList"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/dealerProductPermissionList"), params=kwargs,
+            headers=self._get_headers(), **kwargs)
 
     def dealing_product_permission_list(self, page=1, size=50, **kwargs):
         """
@@ -477,15 +466,14 @@ class PodDealing(PodBase):
         :param int size: تعداد در هر صفحه
         :return: list
         """
-        params = kwargs
-        params["offset"] = calc_offset(page, size)
-        params["size"] = size
+        kwargs["offset"] = calc_offset(page, size)
+        kwargs["size"] = size
 
-        self._validate(params, "dealingProductPermissionList")
+        self._validate(kwargs, "dealingProductPermissionList")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/dealingProductPermissionList"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/dealingProductPermissionList"), params=kwargs,
+            headers=self._get_headers(), **kwargs)
 
     def enable_dealer_product_permission(self, product_id, dealer_biz_id, **kwargs):
         """
@@ -503,8 +491,8 @@ class PodDealing(PodBase):
         self._validate(params, "enableDealerProductPermission")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/enableDealerProductPermission"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/enableDealerProductPermission"), params=params,
+            headers=self._get_headers(), **kwargs)
 
     def disable_dealer_product_permission(self, product_id, dealer_biz_id, **kwargs):
         """
@@ -522,5 +510,5 @@ class PodDealing(PodBase):
         self._validate(params, "disableDealerProductPermission")
 
         return self._request.call(
-            sc_product_id=super(PodDealing, self)._get_sc_product_id("/nzh/biz/disableDealerProductPermission"),
-            params=params, headers=self._get_headers(), **kwargs)
+            super(PodDealing, self)._get_sc_product_settings("/nzh/biz/disableDealerProductPermission"), params=params,
+            headers=self._get_headers(), **kwargs)

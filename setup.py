@@ -9,7 +9,7 @@ with open("pod_dealing/version.py") as fp:
 
 
 requires = [
-    "pod-base>=1.0.2,<2"
+    "pod-base>=1.0.3,<2"
 ]
 
 setup(
